@@ -867,7 +867,7 @@
         //
         // IMPORTANT: Only change the 'endpoint' URL below - leave everything else as is!
         webhook: {
-          endpoint: 'https://hooks.zapier.com/hooks/catch/YOUR_ZAPIER_WEBHOOK_ID_HERE', // ← PASTE YOUR ZAPIER WEBHOOK URL HERE
+          endpoint: 'https://hooks.zapier.com/hooks/catch/23773153/u23m9qc/', // ← PASTE YOUR ZAPIER WEBHOOK URL HERE
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -1148,18 +1148,36 @@
       async function submitToWebhook(data) {
         const config = CRM_CONFIG.webhook;
         
-        const response = await fetch(config.endpoint, {
-          method: config.method || 'POST',
-          headers: config.headers,
-          body: JSON.stringify(data)
-        });
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Webhook Error: ${errorText || 'Unknown error'}`);
+        // CORS FIX FOR GITHUB PAGES + ZAPIER
+        // When hosting on GitHub Pages, browsers enforce CORS policies that prevent
+        // reading responses from cross-origin requests to Zapier webhooks.
+        // Using 'no-cors' mode allows the request to be sent, but we cannot read the response.
+        // This is fine for Zapier webhooks since they process the data regardless of whether
+        // we can read the response. The webhook will still receive and process the data.
+        try {
+          const response = await fetch(config.endpoint, {
+            method: config.method || 'POST',
+            mode: 'no-cors', // Bypass CORS restrictions
+            headers: config.headers,
+            body: JSON.stringify(data)
+          });
+          
+          // In 'no-cors' mode, we cannot read the response status or body
+          // But if the fetch doesn't throw an error, the request was sent successfully
+          console.log('Webhook data sent successfully to Zapier');
+          
+          return {
+            success: true,
+            method: 'webhook',
+            timestamp: new Date().toISOString(),
+            message: 'Data sent to Zapier webhook (response not readable due to CORS)'
+          };
+          
+        } catch (error) {
+          // Only network errors (like connection failures) will reach here
+          // Response status errors are not detectable in no-cors mode
+          throw new Error(`Network error sending to webhook: ${error.message}`);
         }
-        
-        return await response.json();
       }
       
       function submitToEmail(data) {
