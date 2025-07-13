@@ -1,0 +1,1403 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Coaching-Gespräch</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css" />
+    <style>
+      :root {
+        --primary-color: #3b82f6;
+        --primary-dark: #1e40af;
+        --secondary-color: #64748b;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-300: #cbd5e1;
+        --gray-600: #475569;
+        --gray-800: #1e293b;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 24px;
+        position: relative;
+        box-sizing: border-box;
+        font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.7;
+        color: var(--gray-800);
+        background-color: var(--gray-50);
+      }
+
+      .instructions {
+        background: linear-gradient(135deg, #f0f9ff 0%, white 100%);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 32px;
+        border: 2px solid var(--gray-200);
+      }
+
+      .instructions h3 {
+        color: var(--primary-color);
+        margin-top: 0;
+        margin-bottom: 16px;
+        font-size: 1.3rem;
+      }
+
+      .instructions p {
+        margin-bottom: 12px;
+        color: var(--gray-700);
+      }
+
+      .instructions ul {
+        margin-left: 20px;
+        color: var(--gray-700);
+      }
+
+      .instructions li {
+        margin-bottom: 8px;
+      }
+
+      .submit-section {
+        background: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        padding: 32px;
+        margin: 32px 0;
+        text-align: center;
+        border: 2px solid var(--gray-200);
+      }
+
+      .submit-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin: 16px 0;
+        min-width: 200px;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .submit-btn:disabled {
+        background: var(--gray-300);
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .privacy-notice {
+        background: var(--gray-50);
+        border-radius: 8px;
+        padding: 16px;
+        margin: 24px 0;
+        font-size: 0.9rem;
+        color: var(--gray-600);
+        border-left: 4px solid var(--primary-color);
+      }
+
+      .success-message {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+        color: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin: 24px 0;
+        text-align: center;
+        display: none;
+      }
+
+      .error-message {
+        background: linear-gradient(135deg, var(--danger-color), #dc2626);
+        color: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin: 24px 0;
+        text-align: center;
+        display: none;
+      }
+
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        border: 4px solid var(--gray-200);
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        transform: translate(-50%, -50%);
+      }
+
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+
+      .required {
+        color: var(--danger-color);
+        margin-left: 4px;
+      }
+
+      .validation-error {
+        color: var(--danger-color);
+        font-size: 0.8rem;
+        margin-top: 4px;
+        display: none;
+      }
+
+      .field-valid {
+        border-color: var(--success-color);
+      }
+
+      .field-invalid {
+        border-color: var(--danger-color);
+      }
+
+      .header-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+        text-align: center;
+        margin-bottom: 32px;
+        padding: 32px 24px;
+        color: white;
+      }
+
+      .title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        text-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+      }
+
+      .participants {
+        display: flex;
+        justify-content: center;
+        gap: 48px;
+        margin-top: 24px;
+      }
+
+      .participant-field {
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      .underline {
+        border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+        display: inline-block;
+        min-width: 180px;
+        margin-left: 12px;
+        padding-bottom: 4px;
+      }
+
+      .section-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        padding: 24px;
+        margin-bottom: 24px;
+        transition: box-shadow 0.2s ease;
+      }
+
+      .section-card:hover {
+        box-shadow: var(--shadow-lg);
+      }
+
+      h2 {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      h2::before {
+        content: '';
+        width: 4px;
+        height: 24px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        border-radius: 2px;
+      }
+
+      h3 {
+        color: var(--secondary-color);
+        font-size: 1.1rem;
+        margin-top: 24px;
+        margin-bottom: 16px;
+        font-weight: 600;
+      }
+
+      .modern-table {
+        width: 100%;
+        margin: 24px 0;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .table-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        background: var(--gray-100);
+        font-weight: 600;
+        color: var(--gray-600);
+        font-size: 0.9rem;
+      }
+
+      .table-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        transition: background-color 0.2s ease;
+      }
+
+      .table-row:hover {
+        background-color: var(--gray-50);
+      }
+
+      .table-cell {
+        padding: 16px 12px;
+        text-align: center;
+        border-bottom: 1px solid var(--gray-200);
+      }
+
+      .table-cell.category {
+        background-color: var(--gray-50);
+        font-weight: 600;
+        color: var(--gray-600);
+      }
+
+      .modern-input {
+        border: 2px solid var(--gray-200);
+        border-radius: 6px;
+        background: white;
+        padding: 8px 12px;
+        min-width: 80px;
+        text-align: center;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        color: var(--gray-800);
+      }
+
+      .modern-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+      }
+
+      .modern-input:hover {
+        border-color: var(--gray-300);
+      }
+
+      .input-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 12px 0;
+      }
+
+      .input-group label {
+        font-weight: 500;
+        color: var(--gray-600);
+        min-width: 80px;
+      }
+
+      .satisfaction-section {
+        background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+        border-radius: 12px;
+        padding: 24px;
+        margin: 24px 0;
+        border: 2px solid var(--gray-200);
+      }
+
+      .satisfaction-scale {
+        display: flex;
+        justify-content: space-between;
+        margin: 16px 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .color-indicator {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        vertical-align: middle;
+        border-radius: 50%;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .red {
+        background-color: var(--danger-color);
+      }
+      .yellow {
+        background-color: var(--warning-color);
+      }
+      .green {
+        background-color: var(--success-color);
+      }
+
+      .motivation-section {
+        background: linear-gradient(135deg, #f0f9ff 0%, white 100%);
+        border-radius: 16px;
+        padding: 32px;
+        margin: 32px 0;
+        border: 2px solid var(--gray-200);
+      }
+
+      .motivation-header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .motivation-graphic {
+        text-align: center;
+        margin: 32px 0;
+        padding: 24px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .motivation-bar {
+        width: 200px;
+        height: 8px;
+        background: var(--gray-200);
+        border-radius: 4px;
+        margin: 16px auto;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .motivation-bar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 60%;
+        background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+        border-radius: 4px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+      }
+
+      .question-group {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 16px 0;
+        box-shadow: var(--shadow-sm);
+        border-left: 4px solid var(--primary-color);
+      }
+
+      .question-label {
+        display: block;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: var(--gray-800);
+        font-size: 1rem;
+      }
+
+      .answer-field {
+        border: 2px solid var(--gray-200);
+        border-radius: 6px;
+        background: white;
+        padding: 12px 16px;
+        min-width: 200px;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        color: var(--gray-800);
+      }
+
+      .answer-field:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+      }
+
+      .wide-field {
+        width: 100%;
+        min-height: 80px;
+        border: 2px solid var(--gray-200);
+        border-radius: 6px;
+        padding: 12px 16px;
+        margin-top: 12px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        resize: vertical;
+      }
+
+      .wide-field:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+      }
+
+      .checkbox-group {
+        margin: 24px 0;
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+
+      .checkbox-group label {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        color: var(--gray-700);
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .checkbox-group label:hover {
+        color: var(--primary-color);
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+        accent-color: var(--primary-color);
+      }
+
+      .notes-section {
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+        border: 2px solid var(--gray-200);
+        margin: 24px 0;
+        min-height: 120px;
+        padding: 16px;
+        transition: border-color 0.2s ease;
+      }
+
+      .notes-section:focus-within {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+      }
+
+      .contact-info {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        margin-top: 32px;
+        padding: 24px;
+        text-align: center;
+        color: white;
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 2px solid var(--gray-200);
+        font-size: 0.8rem;
+        color: var(--gray-600);
+      }
+
+      strong {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 16px;
+        }
+        
+        .participants {
+          flex-direction: column;
+          gap: 16px;
+        }
+        
+        .table-header,
+        .table-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        
+        .checkbox-group {
+          flex-direction: column;
+          gap: 12px;
+        }
+        
+        .submit-btn {
+          width: 100%;
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <form id="coaching-form">
+
+    <div class="header-section">
+      <div class="title">Coaching-Gespräch</div>
+      <div class="participants">
+        <div class="participant-field">mit <span class="required">*</span> <input type="text" id="participant-name" class="underline" style="border: none; border-bottom: 2px solid rgba(255, 255, 255, 0.7); background: transparent; color: white; text-align: center; font-size: 1.1rem; font-weight: 500;" placeholder="Ihr Name" required /></div>
+        <div class="participant-field">am <span class="required">*</span> <input type="datetime-local" id="meeting-date" class="underline" style="border: none; border-bottom: 2px solid rgba(255, 255, 255, 0.7); background: transparent; color: white; text-align: center; font-size: 1.1rem; font-weight: 500;" required /></div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h3>📝 Anweisungen zum Ausfüllen</h3>
+      <p>Bitte füllen Sie dieses Formular vollständig aus. Ihre Angaben helfen uns, Ihre aktuelle Situation besser zu verstehen und Sie optimal zu unterstützen.</p>
+      <ul>
+        <li>Felder mit einem roten Stern (*) sind Pflichtfelder</li>
+        <li>Geben Sie alle Zahlen in Euro bzw. KE (Kapitaleinheiten) an</li>
+        <li>Seien Sie ehrlich und transparent - alle Angaben werden vertraulich behandelt</li>
+        <li>Bei Fragen können Sie sich jederzeit an Wolfgang Gimmy wenden</li>
+      </ul>
+      <p><strong>Geschätzte Ausfüllzeit:</strong> 10-15 Minuten</p>
+    </div>
+
+    <div class="section-card">
+      <h2>1. Aktuelle Abrechnung</h2>
+      <p style="color: var(--gray-600); margin-bottom: 20px;">Bitte tragen Sie hier Ihre aktuellen Abrechnungsdaten ein. Die Netto-Werte werden automatisch berechnet.</p>
+
+      <div class="modern-table">
+        <div class="table-header">
+          <div class="table-cell"></div>
+          <div class="table-cell">Zugang</div>
+          <div class="table-cell">Abgang</div>
+          <div class="table-cell">Netto Gesamt</div>
+          <div class="table-cell">EQF 12 M</div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell category">Eigen</div>
+          <div class="table-cell"><input type="number" id="eigen-zugang" class="modern-input" step="0.01" placeholder="0.00" /></div>
+          <div class="table-cell"><input type="number" id="eigen-abgang" class="modern-input" step="0.01" placeholder="0.00" /></div>
+          <div class="table-cell"><input type="number" id="eigen-netto" class="modern-input" step="0.01" readonly /></div>
+          <div class="table-cell"><input type="number" id="eigen-eqf" class="modern-input" step="0.01" placeholder="0.00" /></div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell category">Gruppe</div>
+          <div class="table-cell"><input type="number" id="gruppe-zugang" class="modern-input" step="0.01" placeholder="0.00" /></div>
+          <div class="table-cell"><input type="number" id="gruppe-abgang" class="modern-input" step="0.01" placeholder="0.00" /></div>
+          <div class="table-cell"><input type="number" id="gruppe-netto" class="modern-input" step="0.01" readonly /></div>
+          <div class="table-cell"><input type="number" id="gruppe-eqf" class="modern-input" step="0.01" placeholder="0.00" /></div>
+        </div>
+        <div class="table-row">
+          <div class="table-cell category">Gesamt</div>
+          <div class="table-cell"><input type="number" id="gesamt-zugang" class="modern-input" step="0.01" readonly /></div>
+          <div class="table-cell"><input type="number" id="gesamt-abgang" class="modern-input" step="0.01" readonly /></div>
+          <div class="table-cell"><input type="number" id="gesamt-netto" class="modern-input" step="0.01" readonly /></div>
+          <div class="table-cell"><input type="number" id="gesamt-eqf" class="modern-input" step="0.01" readonly /></div>
+        </div>
+      </div>
+
+      <h3>Unterkategorien:</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 16px 0">
+        <div class="input-group">
+          <label>Arbeit:</label>
+          <input type="number" id="subcat-arbeit" class="modern-input" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="input-group">
+          <label>Gesundheit:</label>
+          <input type="number" id="subcat-gesundheit" class="modern-input" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="input-group">
+          <label>Mindset:</label>
+          <input type="number" id="subcat-mindset" class="modern-input" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="input-group">
+          <label>Social/Life:</label>
+          <input type="number" id="subcat-social" class="modern-input" step="0.01" placeholder="0.00" />
+        </div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--gray-50); border-radius: 8px">
+        <p style="margin: 0; font-size: 1.1rem">
+          <strong>Gesamtverdienst diesen Monat</strong> inklusive aller Sonderleistungen ca.
+          <span style="font-size: 1.2rem; font-weight: 600; color: var(--primary-color)">€</span>
+          <input type="number" id="gesamtverdienst" class="answer-field" style="min-width: 120px; margin-left: 8px" step="0.01" placeholder="0.00" required />
+          <span class="required">*</span>
+        </p>
+        <div class="validation-error" id="gesamtverdienst-error"></div>
+      </div>
+
+      <div class="satisfaction-section">
+        <p style="margin: 0 0 16px 0; font-size: 1.1rem"><strong>Wie zufrieden sind Sie damit aktuell? (0-10)</strong></p>
+        <div class="satisfaction-scale">
+          <span><span class="color-indicator red"></span>&lt;28</span>
+          <span><span class="color-indicator yellow"></span>28-39</span>
+          <span><span class="color-indicator green"></span>&gt;40</span>
+        </div>
+        <div style="margin-top: 16px">
+          <label style="font-weight: 600; margin-right: 12px">Bewertung:</label>
+          <input type="number" id="satisfaction-rating" class="modern-input" style="min-width: 60px" min="0" max="10" step="1" placeholder="0-10" required />
+          <span class="required">*</span>
+        </div>
+        <div class="validation-error" id="satisfaction-error"></div>
+      </div>
+
+      <h3>Notizen:</h3>
+      <div class="notes-section">
+        <textarea id="notes-section1" style="width: 100%; min-height: 100px; border: none; background: transparent; resize: vertical; font-family: inherit; font-size: 0.9rem" placeholder="Ihre Notizen zur aktuellen Abrechnung..."></textarea>
+      </div>
+    </div>
+
+    <div class="section-card motivation-section">
+      <h2 style="justify-content: center; margin-bottom: 16px">3. Motivation/Demotivation</h2>
+      <p style="color: var(--gray-600); margin-bottom: 20px; text-align: center;">Teilen Sie uns Ihre Ziele und Pläne mit. Dies hilft uns, Sie bestmöglich zu unterstützen.</p>
+
+      <div class="motivation-graphic">
+        <div style="font-size: 1.2rem; font-weight: 600; color: var(--success-color); margin-bottom: 8px">
+          MOTIVATION
+        </div>
+        <div class="motivation-bar"></div>
+        <div style="font-size: 1.2rem; font-weight: 600; color: var(--danger-color); margin-top: 8px">
+          DEMOTIVATION
+        </div>
+        <p style="margin-top: 16px; font-size: 0.9rem; color: var(--gray-600)">
+          Ihre aktuelle Motivation ist der Schlüssel zum Erfolg
+        </p>
+      </div>
+
+      <div class="question-group">
+        <label class="question-label">Wie viel KE Eigenumsatz wären in der nächsten Abrechnung für Sie richtig gut? <span class="required">*</span></label>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <input type="number" id="target-eigenumsatz" class="answer-field" step="0.01" placeholder="0.00" required />
+          <span style="font-weight: 600; color: var(--primary-color)">KE</span>
+        </div>
+        <div class="validation-error" id="target-eigenumsatz-error"></div>
+      </div>
+
+      <div class="question-group">
+        <label class="question-label">Was müssen Sie dafür tun? <span class="required">*</span></label>
+        <textarea id="action-plan" class="wide-field" style="min-height: 80px" placeholder="Beschreiben Sie Ihre konkreten Aktionspläne und Schritte..." required></textarea>
+        <div class="validation-error" id="action-plan-error"></div>
+      </div>
+
+      <div class="question-group">
+        <label class="question-label">Mit wie viel KE Gruppe rechnen Sie?</label>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <input type="number" id="expected-gruppe" class="answer-field" step="0.01" placeholder="0.00" />
+          <span style="font-weight: 600; color: var(--primary-color)">KE</span>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <label class="question-label">Wie können Sie Ihr Team unterstützen?</label>
+        <textarea id="support-plan" class="wide-field" style="min-height: 80px" placeholder="Welche Unterstützung können Sie Ihrem Team anbieten?"></textarea>
+      </div>
+
+      <div class="question-group">
+        <label class="question-label">Was wäre das Ergebnis, ausgedrückt in Verdienst?</label>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <input type="number" id="expected-earnings" class="answer-field" step="0.01" placeholder="0.00" />
+          <span style="font-weight: 600; color: var(--success-color)">€</span>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <label class="question-label">Gibt es noch weitere Ziele für die nächste Zeit?</label>
+        <p style="font-size: 0.8rem; margin: 8px 0; color: var(--gray-600)">
+          (Berührungen Eigen/Team, Prüfung, Wettbewerbe, neue Partner, sonstige Ziele?)
+        </p>
+        <textarea id="additional-goals" class="wide-field" style="min-height: 100px" placeholder="Beschreiben Sie Ihre weiteren Ziele und Pläne..."></textarea>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <h2>4. Coaching-Plan</h2>
+      <p style="color: var(--gray-600); margin-bottom: 20px;">Lassen Sie uns gemeinsam planen, wie wir Sie weiter unterstützen können.</p>
+
+      <div style="margin: 24px 0">
+        <p style="margin-bottom: 16px; font-size: 1.1rem; font-weight: 600">Sollen wir das nächste Coaching-Gespräch planen?</p>
+        <div class="checkbox-group">
+          <label><input type="radio" id="next-coaching-yes" name="next-coaching" value="yes" /> ja</label>
+          <label><input type="radio" id="next-coaching-ondemand" name="next-coaching" value="ondemand" /> bei Bedarf</label>
+        </div>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background: var(--gray-50); border-radius: 8px">
+        <label style="font-weight: 600; margin-right: 12px">Termin ca.:</label>
+        <input type="datetime-local" id="next-appointment" class="answer-field" style="min-width: 200px" />
+      </div>
+    </div>
+
+    <div class="privacy-notice">
+      <h4 style="margin-top: 0; color: var(--gray-800);">📄 Datenschutz-Hinweis</h4>
+      <p style="margin-bottom: 12px;">Ihre Daten werden vertraulich behandelt und ausschließlich für Coaching-Zwecke verwendet. Mit dem Absenden stimmen Sie der Verarbeitung Ihrer Daten gemäß unserer Datenschutzbestimmungen zu.</p>
+      <p style="margin-bottom: 0;">Ihre Angaben werden in unserem CRM-System gespeichert und dienen der optimalen Betreuung und Unterstützung Ihres Coaching-Prozesses.</p>
+    </div>
+
+    <div class="submit-section">
+      <h3 style="margin-bottom: 16px; color: var(--gray-800);">📤 Formular absenden</h3>
+      <p style="margin-bottom: 24px; color: var(--gray-600);">Bitte überprüfen Sie Ihre Angaben und senden Sie das Formular ab. Sie erhalten eine Bestätigung per E-Mail.</p>
+      <button type="submit" class="submit-btn" id="submit-btn">Coaching-Gespräch absenden</button>
+      <p style="margin-top: 16px; font-size: 0.9rem; color: var(--gray-600);">Nach dem Absenden erhalten Sie eine Bestätigungsmeldung.</p>
+    </div>
+
+    <div class="success-message" id="success-message">
+      <h3 style="margin-bottom: 16px;">✅ Erfolgreich abgesendet!</h3>
+      <p style="margin-bottom: 12px;">Vielen Dank für Ihre Angaben. Das Coaching-Gespräch wurde erfolgreich übermittelt.</p>
+      <p style="margin-bottom: 0;">Wolfgang Gimmy wird sich zeitnah bei Ihnen melden, um die nächsten Schritte zu besprechen.</p>
+    </div>
+
+    <div class="error-message" id="error-message">
+      <h3 style="margin-bottom: 16px;">❌ Fehler beim Absenden</h3>
+      <p style="margin-bottom: 12px;">Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie Wolfgang Gimmy direkt.</p>
+      <p style="margin-bottom: 0;" id="error-details"></p>
+    </div>
+
+    </form>
+
+    <div class="contact-info">
+      <h2 style="border: none; padding: 0; margin-bottom: 16px; color: white; justify-content: center">Ansprechpartner</h2>
+      <p><strong>Wolfgang GIMMY</strong></p>
+      <p>Ihr persönlicher Coach</p>
+      <p style="margin-top: 16px; font-size: 0.9rem;">Bei Fragen stehe ich Ihnen gerne zur Verfügung.</p>
+    </div>
+
+    <div class="footer">
+      <p>© 2025 Coaching-Gespräch. Vertraulich und ausschließlich für den bezeichneten Teilnehmer bestimmt.</p>
+    </div>
+
+    <script>
+      // =============================================================================
+      // CRM INTEGRATION CONFIGURATION
+      // =============================================================================
+      // 
+      // SETUP INSTRUCTIONS:
+      // 1. Choose your CRM system below and set CRM_SYSTEM to the appropriate value
+      // 2. Configure the API credentials for your chosen system
+      // 3. Test the integration with a sample submission
+      // 4. Deploy to your web server
+      //
+      // SUPPORTED CRM SYSTEMS:
+      // - 'hubspot': HubSpot CRM API
+      // - 'salesforce': Salesforce API
+      // - 'pipedrive': Pipedrive API
+      // - 'webhook': Generic webhook/API endpoint
+      // - 'email': Email fallback (uses mailto)
+      // - 'local': Local storage only (for testing)
+      //      
+      const CRM_CONFIG = {
+        // Set your CRM system here:
+        CRM_SYSTEM: 'webhook', // Change this to your preferred CRM
+        
+        // HubSpot Configuration
+        // Get your API key from: https://app.hubspot.com/settings/integrations/api-key
+        hubspot: {
+          apiKey: 'YOUR_HUBSPOT_API_KEY_HERE',
+          portalId: 'YOUR_PORTAL_ID_HERE',
+          formId: 'YOUR_FORM_ID_HERE', // Optional: for form submissions
+          endpoint: 'https://api.hubapi.com/contacts/v1/contact',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        },
+        
+        // Salesforce Configuration
+        // Setup: Create a Connected App in Salesforce Setup
+        salesforce: {
+          clientId: 'YOUR_SALESFORCE_CLIENT_ID_HERE',
+          clientSecret: 'YOUR_SALESFORCE_CLIENT_SECRET_HERE',
+          username: 'YOUR_SALESFORCE_USERNAME_HERE',
+          password: 'YOUR_SALESFORCE_PASSWORD_HERE',
+          securityToken: 'YOUR_SALESFORCE_SECURITY_TOKEN_HERE',
+          instanceUrl: 'https://your-instance.salesforce.com',
+          endpoint: '/services/data/v50.0/sobjects/Contact/',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        },
+        
+        // Pipedrive Configuration
+        // Get your API token from: https://company.pipedrive.com/settings/api
+        pipedrive: {
+          apiToken: 'YOUR_PIPEDRIVE_API_TOKEN_HERE',
+          companyDomain: 'YOUR_COMPANY_DOMAIN', // e.g., 'company-name'
+          endpoint: 'https://YOUR_COMPANY_DOMAIN.pipedrive.com/api/v1/persons',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        },
+        
+        // ZAPIER WEBHOOK CONFIGURATION
+        // 
+        // ZAPIER SETUP INSTRUCTIONS:
+        // 1. Go to zapier.com and create a new Zap
+        // 2. Choose "Webhooks by Zapier" as the trigger
+        // 3. Select "Catch Hook" as the event
+        // 4. Zapier will show you a webhook URL like: https://hooks.zapier.com/hooks/catch/12345/abcdef/
+        // 5. Copy that URL and paste it in the 'endpoint' field below
+        // 6. That's it! No API keys or authentication needed for Zapier
+        //
+        // IMPORTANT: Only change the 'endpoint' URL below - leave everything else as is!
+        webhook: {
+          endpoint: 'https://hooks.zapier.com/hooks/catch/YOUR_ZAPIER_WEBHOOK_ID_HERE', // ← PASTE YOUR ZAPIER WEBHOOK URL HERE
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        },
+        
+        // Email Fallback Configuration
+        email: {
+          recipient: 'wolfgang.gimmy@example.com',
+          subject: 'Neues Coaching-Gespräch Formular',
+          body: 'Ein neues Coaching-Gespräch wurde eingereicht. Daten sind im Anhang.'
+        },
+        
+        // Local Storage Configuration (for testing)
+        local: {
+          storageKey: 'coaching-sessions',
+          maxEntries: 100
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', function() {
+        // Set current date/time
+        const now = new Date();
+        document.getElementById('meeting-date').value = now.toISOString().slice(0, 16);
+
+        setupCalculations();
+        setupFormSubmission();
+      });
+
+      function setupCalculations() {
+        ['eigen', 'gruppe'].forEach(type => {
+          const zugangField = document.getElementById(`${type}-zugang`);
+          const abgangField = document.getElementById(`${type}-abgang`);
+          const nettoField = document.getElementById(`${type}-netto`);
+
+          function calculate() {
+            const zugang = parseFloat(zugangField.value) || 0;
+            const abgang = parseFloat(abgangField.value) || 0;
+            nettoField.value = (zugang - abgang).toFixed(2);
+            calculateTotals();
+          }
+
+          zugangField.addEventListener('input', calculate);
+          abgangField.addEventListener('input', calculate);
+        });
+      }
+
+      function calculateTotals() {
+        const eigenZugang = parseFloat(document.getElementById('eigen-zugang').value) || 0;
+        const eigenAbgang = parseFloat(document.getElementById('eigen-abgang').value) || 0;
+        const eigenEqf = parseFloat(document.getElementById('eigen-eqf').value) || 0;
+
+        const gruppeZugang = parseFloat(document.getElementById('gruppe-zugang').value) || 0;
+        const gruppeAbgang = parseFloat(document.getElementById('gruppe-abgang').value) || 0;
+        const gruppeEqf = parseFloat(document.getElementById('gruppe-eqf').value) || 0;
+
+        document.getElementById('gesamt-zugang').value = (eigenZugang + gruppeZugang).toFixed(2);
+        document.getElementById('gesamt-abgang').value = (eigenAbgang + gruppeAbgang).toFixed(2);
+        document.getElementById('gesamt-netto').value = ((eigenZugang - eigenAbgang) + (gruppeZugang - gruppeAbgang)).toFixed(2);
+        document.getElementById('gesamt-eqf').value = (eigenEqf + gruppeEqf).toFixed(2);
+      }
+
+      function validateField(field) {
+        let isValid = true;
+        let errorMessage = '';
+
+        if (field.hasAttribute('required') && !field.value.trim()) {
+          isValid = false;
+          errorMessage = 'Dieses Feld ist erforderlich';
+        } else if (field.type === 'number' && field.value) {
+          const val = parseFloat(field.value);
+          if (isNaN(val)) {
+            isValid = false;
+            errorMessage = 'Bitte geben Sie eine gültige Zahl ein';
+          } else if (field.min !== '' && val < parseFloat(field.min)) {
+            isValid = false;
+            errorMessage = `Wert muss mindestens ${field.min} sein`;
+          } else if (field.max !== '' && val > parseFloat(field.max)) {
+            isValid = false;
+            errorMessage = `Wert darf höchstens ${field.max} sein`;
+          }
+        }
+
+        field.classList.remove('field-valid', 'field-invalid');
+        field.classList.add(isValid ? 'field-valid' : 'field-invalid');
+
+        const errorElement = document.getElementById(field.id + '-error');
+        if (errorElement) {
+          errorElement.textContent = errorMessage;
+          errorElement.style.display = isValid ? 'none' : 'block';
+        }
+
+        return isValid;
+      }
+
+      function validateForm() {
+        let valid = true;
+        const form = document.getElementById('coaching-form');
+        const fields = form.querySelectorAll('input, textarea');
+
+        fields.forEach(field => {
+          if (!validateField(field)) {
+            valid = false;
+          }
+        });
+
+        return valid;
+      }
+
+      function collectFormData() {
+        return {
+          timestamp: new Date().toISOString(),
+          sessionId: 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          participant: {
+            name: document.getElementById('participant-name').value.trim(),
+            meetingDate: document.getElementById('meeting-date').value
+          },
+          accounting: {
+            eigen: {
+              zugang: parseFloat(document.getElementById('eigen-zugang').value) || 0,
+              abgang: parseFloat(document.getElementById('eigen-abgang').value) || 0,
+              netto: parseFloat(document.getElementById('eigen-netto').value) || 0,
+              eqf: parseFloat(document.getElementById('eigen-eqf').value) || 0
+            },
+            gruppe: {
+              zugang: parseFloat(document.getElementById('gruppe-zugang').value) || 0,
+              abgang: parseFloat(document.getElementById('gruppe-abgang').value) || 0,
+              netto: parseFloat(document.getElementById('gruppe-netto').value) || 0,
+              eqf: parseFloat(document.getElementById('gruppe-eqf').value) || 0
+            },
+            subcategories: {
+              arbeit: parseFloat(document.getElementById('subcat-arbeit').value) || 0,
+              gesundheit: parseFloat(document.getElementById('subcat-gesundheit').value) || 0,
+              mindset: parseFloat(document.getElementById('subcat-mindset').value) || 0,
+              social: parseFloat(document.getElementById('subcat-social').value) || 0
+            },
+            totalEarnings: parseFloat(document.getElementById('gesamtverdienst').value) || 0,
+            satisfactionRating: parseInt(document.getElementById('satisfaction-rating').value) || 0,
+            notes: document.getElementById('notes-section1').value.trim()
+          },
+          motivation: {
+            targetEigenumsatz: parseFloat(document.getElementById('target-eigenumsatz').value) || 0,
+            actionPlan: document.getElementById('action-plan').value.trim(),
+            expectedGruppe: parseFloat(document.getElementById('expected-gruppe').value) || 0,
+            supportPlan: document.getElementById('support-plan').value.trim(),
+            expectedEarnings: parseFloat(document.getElementById('expected-earnings').value) || 0,
+            additionalGoals: document.getElementById('additional-goals').value.trim()
+          },
+          coaching: {
+            nextCoaching: document.querySelector('input[name="next-coaching"]:checked')?.value || '',
+            nextAppointment: document.getElementById('next-appointment').value
+          }
+        };
+      }
+
+      // =============================================================================
+      // CRM INTEGRATION FUNCTIONS
+      // =============================================================================
+      
+      async function submitToHubSpot(data) {
+        const config = CRM_CONFIG.hubspot;
+        
+        // Format data for HubSpot API
+        const hubspotData = {
+          properties: [
+            { property: 'firstname', value: data.participant.name.split(' ')[0] },
+            { property: 'lastname', value: data.participant.name.split(' ').slice(1).join(' ') },
+            { property: 'email', value: data.participant.email || `${data.participant.name.replace(/\s+/g, '').toLowerCase()}@example.com` },
+            { property: 'phone', value: data.participant.phone || '' },
+            { property: 'coaching_session_date', value: data.participant.meetingDate },
+            { property: 'total_earnings', value: data.accounting.totalEarnings.toString() },
+            { property: 'satisfaction_rating', value: data.accounting.satisfactionRating.toString() },
+            { property: 'target_eigenumsatz', value: data.motivation.targetEigenumsatz.toString() },
+            { property: 'action_plan', value: data.motivation.actionPlan },
+            { property: 'additional_goals', value: data.motivation.additionalGoals }
+          ]
+        };
+        
+        const response = await fetch(`${config.endpoint}?hapikey=${config.apiKey}`, {
+          method: 'POST',
+          headers: config.headers,
+          body: JSON.stringify(hubspotData)
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`HubSpot API Error: ${errorData.message || 'Unknown error'}`);
+        }
+        
+        return await response.json();
+      }
+      
+      async function submitToSalesforce(data) {
+        const config = CRM_CONFIG.salesforce;
+        
+        // First, get OAuth token
+        const tokenResponse = await fetch(`${config.instanceUrl}/services/oauth2/token`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({
+            grant_type: 'password',
+            client_id: config.clientId,
+            client_secret: config.clientSecret,
+            username: config.username,
+            password: config.password + config.securityToken
+          })
+        });
+        
+        if (!tokenResponse.ok) {
+          throw new Error('Salesforce authentication failed');
+        }
+        
+        const tokenData = await tokenResponse.json();
+        
+        // Format data for Salesforce API
+        const salesforceData = {
+          FirstName: data.participant.name.split(' ')[0],
+          LastName: data.participant.name.split(' ').slice(1).join(' '),
+          Email: data.participant.email || `${data.participant.name.replace(/\s+/g, '').toLowerCase()}@example.com`,
+          Phone: data.participant.phone || '',
+          Coaching_Session_Date__c: data.participant.meetingDate,
+          Total_Earnings__c: data.accounting.totalEarnings,
+          Satisfaction_Rating__c: data.accounting.satisfactionRating,
+          Target_Eigenumsatz__c: data.motivation.targetEigenumsatz,
+          Action_Plan__c: data.motivation.actionPlan,
+          Additional_Goals__c: data.motivation.additionalGoals
+        };
+        
+        const response = await fetch(`${config.instanceUrl}${config.endpoint}`, {
+          method: 'POST',
+          headers: {
+            ...config.headers,
+            'Authorization': `Bearer ${tokenData.access_token}`
+          },
+          body: JSON.stringify(salesforceData)
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Salesforce API Error: ${errorData[0]?.message || 'Unknown error'}`);
+        }
+        
+        return await response.json();
+      }
+      
+      async function submitToPipedrive(data) {
+        const config = CRM_CONFIG.pipedrive;
+        
+        // Format data for Pipedrive API
+        const pipedriveData = {
+          name: data.participant.name,
+          email: data.participant.email || `${data.participant.name.replace(/\s+/g, '').toLowerCase()}@example.com`,
+          phone: data.participant.phone || '',
+          'coaching_session_date': data.participant.meetingDate,
+          'total_earnings': data.accounting.totalEarnings,
+          'satisfaction_rating': data.accounting.satisfactionRating,
+          'target_eigenumsatz': data.motivation.targetEigenumsatz,
+          'action_plan': data.motivation.actionPlan,
+          'additional_goals': data.motivation.additionalGoals
+        };
+        
+        const response = await fetch(`${config.endpoint}?api_token=${config.apiToken}`, {
+          method: 'POST',
+          headers: config.headers,
+          body: JSON.stringify(pipedriveData)
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Pipedrive API Error: ${errorData.error || 'Unknown error'}`);
+        }
+        
+        return await response.json();
+      }
+      
+      async function submitToWebhook(data) {
+        const config = CRM_CONFIG.webhook;
+        
+        const response = await fetch(config.endpoint, {
+          method: config.method || 'POST',
+          headers: config.headers,
+          body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Webhook Error: ${errorText || 'Unknown error'}`);
+        }
+        
+        return await response.json();
+      }
+      
+      function submitToEmail(data) {
+        const config = CRM_CONFIG.email;
+        
+        // Format data for email body
+        const emailBody = `
+Neues Coaching-Gespräch eingereicht:
+
+Teilnehmer: ${data.participant.name}
+Datum: ${data.participant.meetingDate}
+
+Aktuelle Abrechnung:
+- Eigen Zugang: ${data.accounting.eigen.zugang}
+- Eigen Abgang: ${data.accounting.eigen.abgang}
+- Eigen Netto: ${data.accounting.eigen.netto}
+- Gruppe Zugang: ${data.accounting.gruppe.zugang}
+- Gruppe Abgang: ${data.accounting.gruppe.abgang}
+- Gruppe Netto: ${data.accounting.gruppe.netto}
+- Gesamtverdienst: ${data.accounting.totalEarnings}
+- Zufriedenheitsbewertung: ${data.accounting.satisfactionRating}/10
+
+Motivation:
+- Ziel Eigenumsatz: ${data.motivation.targetEigenumsatz} KE
+- Aktionsplan: ${data.motivation.actionPlan}
+- Erwartete Gruppe: ${data.motivation.expectedGruppe} KE
+- Unterstützungsplan: ${data.motivation.supportPlan}
+- Erwarteter Verdienst: ${data.motivation.expectedEarnings} €
+- Zusätzliche Ziele: ${data.motivation.additionalGoals}
+
+Coaching-Plan:
+- Nächstes Coaching: ${data.coaching.nextCoaching}
+- Nächster Termin: ${data.coaching.nextAppointment}
+
+Notizen: ${data.accounting.notes}
+        `.trim();
+        
+        const mailtoLink = `mailto:${config.recipient}?subject=${encodeURIComponent(config.subject)}&body=${encodeURIComponent(emailBody)}`;
+        window.open(mailtoLink, '_blank');
+        
+        return Promise.resolve({ success: true, method: 'email' });
+      }
+      
+      function submitToLocal(data) {
+        const config = CRM_CONFIG.local;
+        
+        try {
+          // Get existing data
+          const existingData = JSON.parse(localStorage.getItem(config.storageKey) || '[]');
+          
+          // Add new entry
+          existingData.push(data);
+          
+          // Keep only the last maxEntries entries
+          if (existingData.length > config.maxEntries) {
+            existingData.splice(0, existingData.length - config.maxEntries);
+          }
+          
+          // Save back to localStorage
+          localStorage.setItem(config.storageKey, JSON.stringify(existingData));
+          
+          console.log('Data saved to local storage:', data);
+          return Promise.resolve({ success: true, method: 'local', id: data.sessionId });
+        } catch (error) {
+          return Promise.reject(new Error(`Local storage error: ${error.message}`));
+        }
+      }
+      
+      // =============================================================================
+      // MAIN SUBMISSION FUNCTION
+      // =============================================================================
+      
+      async function submitForm(data) {
+        const submitBtn = document.getElementById('submit-btn');
+        const successMsg = document.getElementById('success-message');
+        const errorMsg = document.getElementById('error-message');
+        const errorDetails = document.getElementById('error-details');
+        
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        successMsg.style.display = 'none';
+        errorMsg.style.display = 'none';
+        errorDetails.textContent = '';
+        
+        try {
+          let result;
+          
+          // Route to appropriate CRM system
+          switch (CRM_CONFIG.CRM_SYSTEM) {
+            case 'hubspot':
+              result = await submitToHubSpot(data);
+              break;
+            case 'salesforce':
+              result = await submitToSalesforce(data);
+              break;
+            case 'pipedrive':
+              result = await submitToPipedrive(data);
+              break;
+            case 'webhook':
+              result = await submitToWebhook(data);
+              break;
+            case 'email':
+              result = await submitToEmail(data);
+              break;
+            case 'local':
+              result = await submitToLocal(data);
+              break;
+            default:
+              throw new Error(`Unsupported CRM system: ${CRM_CONFIG.CRM_SYSTEM}`);
+          }
+          
+          console.log('Form submitted successfully:', result);
+          
+          // Show success message
+          successMsg.style.display = 'block';
+          document.getElementById('coaching-form').reset();
+          calculateTotals();
+          
+          // Scroll to success message
+          successMsg.scrollIntoView({ behavior: 'smooth' });
+          
+        } catch (error) {
+          console.error('Form submission error:', error);
+          
+          // Try fallback methods
+          let fallbackSuccess = false;
+          
+          if (CRM_CONFIG.CRM_SYSTEM !== 'local') {
+            try {
+              await submitToLocal(data);
+              fallbackSuccess = true;
+              errorDetails.textContent = `${error.message} (Daten wurden lokal gespeichert)`;
+            } catch (fallbackError) {
+              console.error('Fallback to local storage failed:', fallbackError);
+            }
+          }
+          
+          if (!fallbackSuccess && CRM_CONFIG.CRM_SYSTEM !== 'email') {
+            try {
+              await submitToEmail(data);
+              fallbackSuccess = true;
+              errorDetails.textContent = `${error.message} (E-Mail Fallback verwendet)`;
+            } catch (fallbackError) {
+              console.error('Fallback to email failed:', fallbackError);
+            }
+          }
+          
+          if (!fallbackSuccess) {
+            errorDetails.textContent = error.message || 'Unbekannter Fehler';
+          }
+          
+          errorMsg.style.display = 'block';
+          errorMsg.scrollIntoView({ behavior: 'smooth' });
+          
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('loading');
+        }
+      }
+
+      function setupFormSubmission() {
+        const form = document.getElementById('coaching-form');
+        form.addEventListener('submit', function(event) {
+          event.preventDefault();
+          if (validateForm()) {
+            const data = collectFormData();
+            submitForm(data);
+          } else {
+            alert('Bitte füllen Sie alle Pflichtfelder korrekt aus.');
+          }
+        });
+
+        // Add blur validation for inputs
+        const fields = form.querySelectorAll('input, textarea');
+        fields.forEach(field => {
+          field.addEventListener('blur', () => validateField(field));
+        });
+      }
+      
+      // =============================================================================
+      // UTILITY FUNCTIONS FOR TESTING AND DEBUGGING
+      // =============================================================================
+      
+      // Function to test CRM connection (call this from browser console)
+      window.testCRMConnection = async function() {
+        const testData = {
+          timestamp: new Date().toISOString(),
+          sessionId: 'test_session_' + Date.now(),
+          participant: {
+            name: 'Test User',
+            meetingDate: new Date().toISOString()
+          },
+          accounting: {
+            totalEarnings: 1000,
+            satisfactionRating: 8,
+            notes: 'Test submission'
+          },
+          motivation: {
+            targetEigenumsatz: 50,
+            actionPlan: 'Test action plan',
+            expectedGruppe: 20,
+            supportPlan: 'Test support',
+            expectedEarnings: 1500,
+            additionalGoals: 'Test goals'
+          },
+          coaching: {
+            nextCoaching: 'yes',
+            nextAppointment: ''
+          }
+        };
+        
+        try {
+          const result = await submitForm(testData);
+          console.log('Test successful:', result);
+          return result;
+        } catch (error) {
+          console.error('Test failed:', error);
+          throw error;
+        }
+      };
+      
+      // Function to view local storage data
+      window.viewLocalData = function() {
+        const data = localStorage.getItem(CRM_CONFIG.local.storageKey);
+        if (data) {
+          console.log('Local storage data:', JSON.parse(data));
+          return JSON.parse(data);
+        } else {
+          console.log('No local data found');
+          return null;
+        }
+      };
+      
+      // Function to clear local storage
+      window.clearLocalData = function() {
+        localStorage.removeItem(CRM_CONFIG.local.storageKey);
+        console.log('Local storage cleared');
+      };
+    </script>
+  </body>
+</html>
